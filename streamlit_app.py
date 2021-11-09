@@ -102,7 +102,7 @@ st.plotly_chart(fig)
 
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
 movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
-
+movieTop50 = movieDFHigh.head(50)
 
 ratings = []
 
