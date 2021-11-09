@@ -99,3 +99,45 @@ genres = genres.sort_values('count',ascending=False)
 
 fig = px.bar(x=genres['genre'],y=genres['count'],labels=dict(x="Genre",y="Aantal waarnemingen"),title="Aantal waarnemingen van genres in top 10000 films")
 st.plotly_chart(fig)
+
+movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
+movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
+
+
+ratings = []
+
+for ind,row in movieTop50.iterrows():
+    code = ia.search_movie(row['original_title'])[0].movieID
+    rating = ia.get_movie(code).data['rating']
+    ratings.append(rating)
+
+movieTop50['IMDB_rating'] = ratings
+st.dataframe(movieTop50)
+
+df1 = movieTop50
+df1.rename(columns={"vote_average":"TMDB rating","IMDB_rating":"IMDB rating","original_title":"Title"},inplace=True)
+
+fig = px.scatter(df1,
+                 x="TMDB rating",
+                 y="IMDB rating",
+                 title='TMDB ratings vs IMDB ratings van top 50 TMDB films',
+                 labels=dict(x='TMDB rating',y='IMDB rating'),
+                 color="Title",
+                 hover_name="Title",
+                 hover_data=["TMDB rating","IMDB rating","genre"])
+fig.update_layout(legend_title_text='Movie name')
+st.plotly_chart(fig)
+
+fig = go.Figure()
+
+for genre in genreList:
+    tempList = [genre]
+    tempDF = movieDF['genre'].apply(lambda s: len(set(s) & set(tempList)) > 0)
+    df = movieDF[tempDF]
+    fig.add_trace(go.Box(x=df['vote_average'],legendgroup=genre,showlegend=True,name=genre))#legendgrouptitle={"text":genre}))
+
+
+fig.update_layout(title="Verdeling cijfers van films per genre",xaxis_title="Cijfer",yaxis_title="Genre")
+
+st.plotly_chart(fig)
+
