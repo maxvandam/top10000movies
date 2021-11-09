@@ -98,4 +98,4 @@ genres = genres.sort_values('count',ascending=False)
 
 
 fig = px.bar(x=genres['genre'],y=genres['count'],labels=dict(x="Genre",y="Aantal waarnemingen"),title="Aantal waarnemingen van genres in top 10000 films")
-st.plotly_chart()
+st.plotly_chart(fig)
