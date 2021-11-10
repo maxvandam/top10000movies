@@ -296,6 +296,6 @@ fig = px.scatter(df1,
 fig.update_layout(legend_title_text='Movie name')
 
 with col2:
-    st.header("Vergelijking van Max zijn films cijfers")
+    st.header("Vergelijking van Max zijn film cijfers")
     st.subheader("De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
     st.plotly_chart(fig)
