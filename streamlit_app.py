@@ -188,7 +188,7 @@ def landPicker(lan):
     elif lan == 'hi':
         return ('India')
     elif lan == 'pt':
-        return ('Portugal')
+        return ('Brazil')
     elif lan == 'no':
         return ('Norway')
     elif lan == 'da':
