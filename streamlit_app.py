@@ -248,7 +248,7 @@ def landPicker(lan):
 
 df_movies = movieDF.copy()
 
-df_movies = df_movies.sort_values('vote_average', ascending=False).head(2000)
+df_movies = df_movies.sort_values('vote_average', ascending=False).head(4000)
 
 testList = []
 for ind, row in df_movies.iterrows():
@@ -268,6 +268,7 @@ fig = px.choropleth_mapbox(gdf_movies,
                            locations=gdf_movies.index,
                            color='vote_avg',
                            hover_name='name',
+                           hover_data=["vote_avg",'name'],
                            color_continuous_scale=px.colors.sequential.Reds,
                            mapbox_style="carto-positron",
                            zoom=1)
