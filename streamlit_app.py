@@ -8,6 +8,8 @@ import streamlit as st
 
 ia = imdb.IMDb()
 
+st.set_page_config(layout="wide")
+
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv",converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0',1)
 
