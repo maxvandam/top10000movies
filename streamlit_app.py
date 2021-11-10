@@ -8,7 +8,12 @@ import streamlit as st
 
 ia = imdb.IMDb()
 
+#st.markdown("#Dashboard analyse Top 10.000 films op TMDB")
+
 st.set_page_config(layout="wide")
+col1, col2 = st.columns(2)
+col1.header("Genres analyse")
+col2.header("Top 50 films analyse")
 
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv",converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0',1)
@@ -21,7 +26,6 @@ genreList = []
 for ind, row in movieDF.iterrows():
     genreList.extend(row['genre'])
 
-print(genreList)
 
 def my_function(x):
   return list( dict.fromkeys(x) )
@@ -100,21 +104,26 @@ genres = genres.sort_values('count',ascending=False)
 
 
 fig = px.bar(x=genres['genre'],y=genres['count'],labels=dict(x="Genre",y="Aantal waarnemingen"),title="Aantal waarnemingen van genres in top 10000 films")
-st.plotly_chart(fig)
+
+with col1:
+    st.plotly_chart(fig)
 
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
 movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
-movieTop50 = movieDFHigh.head(50)
+#movieTop50 = movieDFHigh.head(50)
 
-ratings = []
+#ratings = []
 
-for ind,row in movieTop50.iterrows():
-    code = ia.search_movie(row['original_title'])[0].movieID
-    rating = ia.get_movie(code).data['rating']
-    ratings.append(rating)
+#for ind,row in movieTop50.iterrows():
+#    code = ia.search_movie(row['original_title'])[0].movieID
+#    rating = ia.get_movie(code).data['rating']
+#    ratings.append(rating)
 
-movieTop50['IMDB_rating'] = ratings
-st.dataframe(movieTop50)
+#movieTop50['IMDB_rating'] = ratings
+movieTop50 = pd.read_csv("movieTop50.csv")
+
+with col2:
+    st.dataframe(movieTop50)
 
 df1 = movieTop50
 df1.rename(columns={"vote_average":"TMDB rating","IMDB_rating":"IMDB rating","original_title":"Title"},inplace=True)
@@ -128,7 +137,9 @@ fig = px.scatter(df1,
                  hover_name="Title",
                  hover_data=["TMDB rating","IMDB rating","genre"])
 fig.update_layout(legend_title_text='Movie name')
-st.plotly_chart(fig)
+
+with col2:
+    st.plotly_chart(fig)
 
 fig = go.Figure()
 
@@ -141,5 +152,6 @@ for genre in genreList:
 
 fig.update_layout(title="Verdeling cijfers van films per genre",xaxis_title="Cijfer",yaxis_title="Genre")
 
-st.plotly_chart(fig)
+with col1:
+    st.plotly_chart(fig)
 
