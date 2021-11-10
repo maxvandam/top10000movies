@@ -264,7 +264,7 @@ gdf_movies = gdf_movies.to_crs(epsg=4326)
 gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
 gdf_movies['aantal_films'] = gdf_movies.groupby('name')['vote_average'].transform('size')
 
-gdf_movies.round({"vote_avg":2})
+gdf_movies = gdf_movies.round({"vote_avg":2})
 
 fig = px.choropleth_mapbox(gdf_movies,
                            geojson=gdf_movies.geometry,
