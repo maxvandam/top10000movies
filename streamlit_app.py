@@ -283,7 +283,7 @@ maxReviews = pd.read_csv('moviereviews.csv',encoding = "ISO-8859-1")
 reviews = maxReviews.merge(movieDF,left_on="Title",right_on="original_title",how="left")
 
 df1 = reviews.copy()
-df1.rename(columns={"vote_average":"TMDB rating","Grade":"Max rating","original_title":"Title"},inplace=True)
+df1.rename(columns={"vote_average":"TMDB rating","Grade":"Max rating","original_title":"title"},inplace=True)
 
 fig = px.scatter(df1,
                  x="TMDB rating",
