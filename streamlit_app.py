@@ -261,7 +261,7 @@ gdf_movies = gdf_movies.to_crs(epsg=4326)
 fig = px.choropleth_mapbox(gdf_movies,
                            geojson = gdf_movies.geometry,
                            locations = gdf_movies.index,
-                           color =  'vote_average',
+                           color='popularity',
                            hover_name = 'name',
                            color_continuous_scale = px.colors.sequential.Reds,
                            mapbox_style = "carto-positron",
