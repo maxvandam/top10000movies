@@ -164,8 +164,6 @@ with col1:
 #Start map
 
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-world
-
 def landPicker(lan):
     if lan == 'en':
         return ('United States of America')
@@ -255,7 +253,6 @@ df_movies['name'] = testList
 df_movies = df_movies.merge(world, on='name')
 
 gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
-gdf_movies
 
 gdf_movies = gdf_movies.to_crs(epsg=4326)
 
@@ -268,4 +265,6 @@ fig = px.choropleth_mapbox(gdf_movies,
                            mapbox_style = "carto-positron",
                           zoom=1,)
 fig.update_layout(title='Average vote per country')
-st.pyplot(fig)
+
+with col3:
+    st.plotly_chart(fig)
