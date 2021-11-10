@@ -277,3 +277,25 @@ with col1:
     st.header("Kaart van landen waar films afspelen")
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
     st.plotly_chart(fig)
+
+maxReviews = pd.read_csv('moviereviews.csv')
+
+reviews = maxReviews.merge(movieDF,left_on="Title",right_on="original_title",how="left")
+
+df1 = reviews.copy()
+df1.rename(columns={"vote_average":"TMDB rating","Grade":"Max rating","original_title":"Title"},inplace=True)
+
+fig = px.scatter(df1,
+                 x="TMDB rating",
+                 y="Max rating",
+                 title='TMDB ratings vs Max ratings',
+                 labels=dict(x='TMDB rating',y='Max rating'),
+                 color="Title",
+                 hover_name="Title",
+                 hover_data=["TMDB rating","Max rating","genre"])
+fig.update_layout(legend_title_text='Movie name')
+
+with col2:
+    st.header("Vergelijking van Max zijn films cijfers")
+    st.subheader("De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
+    st.plotly_chart(fig)
