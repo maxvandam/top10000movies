@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 from ast import literal_eval
 import imdb
 import streamlit as st
+import geopandas as gpd
 
 ia = imdb.IMDb()
 
@@ -12,7 +13,7 @@ ia = imdb.IMDb()
 
 st.set_page_config(layout="wide")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
@@ -159,3 +160,112 @@ fig.update_layout(title="Verdeling cijfers van films per genre",xaxis_title="Cij
 with col1:
     st.plotly_chart(fig)
 
+
+#Start map
+
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world
+
+def landPicker(lan):
+    if lan == 'en':
+        return ('United States of America')
+    elif lan == 'ja':
+        return ('Japan')
+    elif lan == 'es':
+        return ('Spain')
+    elif lan == 'fr':
+        return ('France')
+    elif lan == 'ko':
+        return ('South Korea')
+    elif lan == 'zh':
+        return ('China')
+    elif lan == 'it':
+        return ('Italy')
+    elif lan == 'cn':
+        return ('China')
+    elif lan == 'de':
+        return ('Germany')
+    elif lan == 'ru':
+        return ('Russia')
+    elif lan == 'hi':
+        return ('India')
+    elif lan == 'pt':
+        return ('Portugal')
+    elif lan == 'no':
+        return ('Norway')
+    elif lan == 'da':
+        return ('Denmark')
+    elif lan == 'sv':
+        return ('Sweden')
+    elif lan == 'nl':
+        return ('Netherlands')
+    elif lan == 'pl':
+        return ('Poland')
+    elif lan == 'th':
+        return ('Thailand')
+    elif lan == 'tr':
+        return ('Turkey')
+    elif lan == 'id':
+        return ('Indonesia')
+    elif lan == 'fi':
+        return ('Finland')
+    elif lan == 'te':
+        return ('India')
+    elif lan == 'cs':
+        return ('Czechia')
+    elif lan == 'sr':
+        return ('Serbia')
+    elif lan == 'he':
+        return ('Israel')
+    elif lan == 'ro':
+        return ('Romania')
+    elif lan == 'Fa':
+        return ('Iran')
+    elif lan == 'eu':
+        return ('Spain')
+    elif lan == 'ar':
+        return ('Saudi Arabia')
+    elif lan == 'el':
+        return ('Greece')
+    elif lan == 'ta':
+        return ('India')
+    elif lan == 'nb':
+        return ('Norway')
+    elif lan == 'is':
+        return ('Iceland')
+    elif lan == 'ms':
+        return ('Malaysia')
+    elif lan == 'hu':
+        return ('Hungary')
+    elif lan == 'bn':
+        return ('Iran')
+    elif lan == 'tl':
+        return ('Philippnes')
+    elif lan == 'la':
+        return ('Italy')
+
+df_movies = movieDF.copy()
+
+testList = []
+for ind,row in df_movies.iterrows():
+    test = [landPicker(row['original_language'])]
+    testList.extend(test)
+
+df_movies['name'] = testList
+df_movies = df_movies.merge(world, on='name')
+
+gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
+gdf_movies
+
+gdf_movies = gdf_movies.to_crs(epsg=4326)
+
+fig = px.choropleth_mapbox(gdf_movies,
+                           geojson = gdf_movies.geometry,
+                           locations = gdf_movies.index,
+                           color =  'vote_average',
+                           hover_name = 'name',
+                           color_continuous_scale = px.colors.sequential.Reds,
+                           mapbox_style = "carto-positron",
+                          zoom=1,)
+fig.update_layout(title='Average vote per country')
+st.pyplot(fig)
