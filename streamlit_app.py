@@ -9,8 +9,6 @@ import geopandas as gpd
 
 ia = imdb.IMDb()
 
-
-
 st.set_page_config(layout="wide")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
 st.header("Door Max van Dam en Gian van Veen")
@@ -18,13 +16,10 @@ col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
+movieDF = pd.read_csv("Top_10000_Popular_Movies.csv", converters={'genre': literal_eval})
+movieDF = movieDF.drop('Unnamed: 0', 1)
 
-
-
-movieDF = pd.read_csv("Top_10000_Popular_Movies.csv",converters={'genre': literal_eval})
-movieDF = movieDF.drop('Unnamed: 0',1)
-
-movieDF2 = movieDF.sort_values("vote_average",ascending=False)
+movieDF2 = movieDF.sort_values("vote_average", ascending=False)
 
 movieDF = movieDF[movieDF['vote_count'] > 10]
 genreList = []
@@ -34,10 +29,10 @@ for ind, row in movieDF.iterrows():
 
 
 def my_function(x):
-  return list( dict.fromkeys(x) )
+    return list(dict.fromkeys(x))
+
 
 genreList = my_function(genreList)
-
 
 Action = 0
 Thriller = 0
@@ -106,10 +101,10 @@ genreDict = dict(
            History, Romance, Horror, Mystery, Music, War, TVmovie])
 
 genres = pd.DataFrame.from_dict(genreDict)
-genres = genres.sort_values('count',ascending=False)
+genres = genres.sort_values('count', ascending=False)
 
-
-fig = px.bar(x=genres['genre'],y=genres['count'],labels=dict(x="Genre",y="Aantal waarnemingen"),title="Aantal waarnemingen van genres in top 10000 films")
+fig = px.bar(x=genres['genre'], y=genres['count'], labels=dict(x="Genre", y="Aantal waarnemingen"),
+             title="Aantal waarnemingen van genres in top 10000 films")
 
 with col1:
     st.subheader("De onderstaande histogram laat zien hoe vaak elk genre terugkomt in de top 10.000 films van TMDB.")
@@ -117,16 +112,16 @@ with col1:
 
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
 movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
-#movieTop50 = movieDFHigh.head(50)
+# movieTop50 = movieDFHigh.head(50)
 
-#ratings = []
+# ratings = []
 
-#for ind,row in movieTop50.iterrows():
+# for ind,row in movieTop50.iterrows():
 #    code = ia.search_movie(row['original_title'])[0].movieID
 #    rating = ia.get_movie(code).data['rating']
 #    ratings.append(rating)
 
-#movieTop50['IMDB_rating'] = ratings
+# movieTop50['IMDB_rating'] = ratings
 movieTop50 = pd.read_csv("movieTop50.csv")
 
 with col2:
@@ -134,20 +129,22 @@ with col2:
     st.dataframe(movieTop50)
 
 df1 = movieTop50
-df1.rename(columns={"vote_average":"TMDB rating","IMDB_rating":"IMDB rating","original_title":"Title"},inplace=True)
+df1.rename(columns={"vote_average": "TMDB rating", "IMDB_rating": "IMDB rating", "original_title": "Title"},
+           inplace=True)
 
 fig = px.scatter(df1,
                  x="TMDB rating",
                  y="IMDB rating",
                  title='TMDB ratings vs IMDB ratings van top 50 TMDB films',
-                 labels=dict(x='TMDB rating',y='IMDB rating'),
+                 labels=dict(x='TMDB rating', y='IMDB rating'),
                  color="Title",
                  hover_name="Title",
-                 hover_data=["TMDB rating","IMDB rating","genre"])
+                 hover_data=["TMDB rating", "IMDB rating", "genre"])
 fig.update_layout(legend_title_text='Movie name')
 
 with col2:
-    st.subheader("Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engels-talige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
+    st.subheader(
+        "Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engels-talige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
     st.plotly_chart(fig)
 
 fig = go.Figure()
@@ -156,19 +153,20 @@ for genre in genreList:
     tempList = [genre]
     tempDF = movieDF['genre'].apply(lambda s: len(set(s) & set(tempList)) > 0)
     df = movieDF[tempDF]
-    fig.add_trace(go.Box(x=df['vote_average'],legendgroup=genre,showlegend=True,name=genre))#legendgrouptitle={"text":genre}))
+    fig.add_trace(go.Box(x=df['vote_average'], legendgroup=genre, showlegend=True,
+                         name=genre))  # legendgrouptitle={"text":genre}))
 
-
-fig.update_layout(title="Verdeling cijfers van films per genre",xaxis_title="Cijfer",yaxis_title="Genre")
+fig.update_layout(title="Verdeling cijfers van films per genre", xaxis_title="Cijfer", yaxis_title="Genre")
 
 with col1:
     st.subheader("De boxplots laten voor elk genre van films zien hoe de TMDB cijfers zijn verdeeld.")
     st.plotly_chart(fig)
 
-
-#Start map
+# Start map
 
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+
 def landPicker(lan):
     if lan == 'en':
         return ('United States of America')
@@ -247,12 +245,13 @@ def landPicker(lan):
     elif lan == 'la':
         return ('Italy')
 
+
 df_movies = movieDF.copy()
 
-df_movies = df_movies.sort_values('vote_average',ascending=False).head(2000)
+df_movies = df_movies.sort_values('vote_average', ascending=False).head(2000)
 
 testList = []
-for ind,row in df_movies.iterrows():
+for ind, row in df_movies.iterrows():
     test = [landPicker(row['original_language'])]
     testList.extend(test)
 
@@ -262,15 +261,16 @@ df_movies = df_movies.merge(world, on='name')
 gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
 
 gdf_movies = gdf_movies.to_crs(epsg=4326)
+gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
 
 fig = px.choropleth_mapbox(gdf_movies,
-                           geojson = gdf_movies.geometry,
-                           locations = gdf_movies.index,
-                           color='vote_average',
-                           hover_name = 'name',
-                           color_continuous_scale = px.colors.sequential.Reds,
-                           mapbox_style = "carto-positron",
-                          zoom=1,)
+                           geojson=gdf_movies.geometry,
+                           locations=gdf_movies.index,
+                           color='vote_avg',
+                           hover_name='name',
+                           color_continuous_scale=px.colors.sequential.Reds,
+                           mapbox_style="carto-positron",
+                           zoom=1)
 fig.update_layout(title='Gemiddeld cijfer per land')
 
 with col1:
@@ -278,24 +278,25 @@ with col1:
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
     st.plotly_chart(fig)
 
-maxReviews = pd.read_csv('moviereviews.csv',encoding = "ISO-8859-1")
+maxReviews = pd.read_csv('moviereviews.csv', encoding="ISO-8859-1")
 
-reviews = maxReviews.merge(movieDF,left_on="Title",right_on="original_title",how="left")
+reviews = maxReviews.merge(movieDF, left_on="Title", right_on="original_title", how="left")
 
 df1 = reviews.copy()
-df1.rename(columns={"vote_average":"TMDB rating","Grade":"Max rating","original_title":"title"},inplace=True)
+df1.rename(columns={"vote_average": "TMDB rating", "Grade": "Max rating", "original_title": "title"}, inplace=True)
 
 fig = px.scatter(df1,
                  x="TMDB rating",
                  y="Max rating",
                  title='TMDB ratings vs Max ratings',
-                 labels=dict(x='TMDB rating',y='Max rating'),
+                 labels=dict(x='TMDB rating', y='Max rating'),
                  color="Title",
                  hover_name="Title",
-                 hover_data=["TMDB rating","Max rating","genre"])
+                 hover_data=["TMDB rating", "Max rating", "genre"])
 fig.update_layout(legend_title_text='Movie name')
 
 with col2:
     st.header("Vergelijking van Max zijn film cijfers")
-    st.subheader("De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
+    st.subheader(
+        "De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
     st.plotly_chart(fig)
