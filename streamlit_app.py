@@ -13,7 +13,7 @@ ia = imdb.IMDb()
 
 st.set_page_config(layout="wide")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
@@ -268,5 +268,6 @@ fig = px.choropleth_mapbox(gdf_movies,
                           zoom=1,)
 fig.update_layout(title='Average vote per country')
 
-with col3:
+with col1:
+    st.header("Kaart van landen waar films afspelen")
     st.plotly_chart(fig)
