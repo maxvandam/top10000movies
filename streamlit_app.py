@@ -13,6 +13,7 @@ ia = imdb.IMDb()
 
 st.set_page_config(layout="wide")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
+st.header("Door Max van Dam en Gian van Veen")
 col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
@@ -111,6 +112,7 @@ genres = genres.sort_values('count',ascending=False)
 fig = px.bar(x=genres['genre'],y=genres['count'],labels=dict(x="Genre",y="Aantal waarnemingen"),title="Aantal waarnemingen van genres in top 10000 films")
 
 with col1:
+    st.caption("De onderstaande histogram laat zien hoe vaak elk genre terugkomt in de top 10.000 films van TMDB.")
     st.plotly_chart(fig)
 
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
@@ -128,6 +130,7 @@ movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
 movieTop50 = pd.read_csv("movieTop50.csv")
 
 with col2:
+    st.caption("Dit is het DataFrame van de top 50 Engels-talige films van TMDB.")
     st.dataframe(movieTop50)
 
 df1 = movieTop50
@@ -144,6 +147,7 @@ fig = px.scatter(df1,
 fig.update_layout(legend_title_text='Movie name')
 
 with col2:
+    st.caption("Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engels-talige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
     st.plotly_chart(fig)
 
 fig = go.Figure()
@@ -158,6 +162,7 @@ for genre in genreList:
 fig.update_layout(title="Verdeling cijfers van films per genre",xaxis_title="Cijfer",yaxis_title="Genre")
 
 with col1:
+    st.caption("De boxplots laten voor elk genre van films zien hoe de TMDB cijfers zijn verdeeld.")
     st.plotly_chart(fig)
 
 
@@ -261,7 +266,7 @@ gdf_movies = gdf_movies.to_crs(epsg=4326)
 fig = px.choropleth_mapbox(gdf_movies,
                            geojson = gdf_movies.geometry,
                            locations = gdf_movies.index,
-                           color='popularity',
+                           color='vote_average',
                            hover_name = 'name',
                            color_continuous_scale = px.colors.sequential.Reds,
                            mapbox_style = "carto-positron",
