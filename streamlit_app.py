@@ -278,7 +278,7 @@ with col1:
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
     st.plotly_chart(fig)
 
-maxReviews = pd.read_csv('moviereviews.csv')
+maxReviews = pd.read_csv('moviereviews.csv',encoding = "ISO-8859-1")
 
 reviews = maxReviews.merge(movieDF,left_on="Title",right_on="original_title",how="left")
 
