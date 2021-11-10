@@ -263,7 +263,7 @@ gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
 gdf_movies = gdf_movies.to_crs(epsg=4326)
 gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
 
-gdf_movies = gdf_movies.assign(vote_avg = lambda x: x['vote_avg'][:3])
+#gdf_movies = gdf_movies.assign(vote_avg = lambda x: x['vote_avg'][:3])
 
 fig = px.choropleth_mapbox(gdf_movies,
                            geojson=gdf_movies.geometry,
