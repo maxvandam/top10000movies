@@ -244,6 +244,8 @@ def landPicker(lan):
 
 df_movies = movieDF.copy()
 
+df_movies = df_movies.sort_values('vote_average',ascending=False).head(500)
+
 testList = []
 for ind,row in df_movies.iterrows():
     test = [landPicker(row['original_language'])]
