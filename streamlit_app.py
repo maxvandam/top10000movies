@@ -8,12 +8,16 @@ import streamlit as st
 
 ia = imdb.IMDb()
 
-#st.markdown("#Dashboard analyse Top 10.000 films op TMDB")
+
 
 st.set_page_config(layout="wide")
+st.title("Dashboard analyse Top 10.000 films op TMDB")
 col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
+
+
+
 
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv",converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0',1)
