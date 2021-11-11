@@ -16,21 +16,6 @@ col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
-page_bg_img = '''
-<style>
-body {
-background-image: url("https://wallpaperaccess.com/full/4840775.jpg");
-background-size: cover;
-}
-</style>
-'''
-
-st.markdown(page_bg_img, unsafe_allow_html=True)
-
-
-
-
-
 
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv", converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0', 1)
