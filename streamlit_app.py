@@ -114,17 +114,17 @@ with col1:
 
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
 movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
-# movieTop50 = movieDFHigh.head(50)
+movieTop50 = movieDFHigh.head(50)
 
-# ratings = []
+ratings = []
 
-# for ind,row in movieTop50.iterrows():
-#    code = ia.search_movie(row['original_title'])[0].movieID
-#    rating = ia.get_movie(code).data['rating']
-#    ratings.append(rating)
+for ind,row in movieTop50.iterrows():
+    code = ia.search_movie(row['original_title'])[0].movieID
+    rating = ia.get_movie(code).data['rating']
+    ratings.append(rating)
 
 # movieTop50['IMDB_rating'] = ratings
-movieTop50 = pd.read_csv("movieTop50.csv")
+#movieTop50 = pd.read_csv("movieTop50.csv")
 
 with col2:
     st.subheader("Dit is het DataFrame van de top 50 Engelstalige films van TMDB.")
