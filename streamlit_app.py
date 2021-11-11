@@ -313,3 +313,6 @@ with col2:
     st.subheader(
         "De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
     st.plotly_chart(fig)
+
+
+st.image("https://i.imgur.com/ZbOOGMN.png")
