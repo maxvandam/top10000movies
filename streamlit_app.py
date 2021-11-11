@@ -127,7 +127,7 @@ movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
 movieTop50 = pd.read_csv("movieTop50.csv")
 
 with col2:
-    st.subheader("Dit is het DataFrame van de top 50 Engels-talige films van TMDB.")
+    st.subheader("Dit is het DataFrame van de top 50 Engelstalige films van TMDB.")
     st.dataframe(movieTop50)
 
 df1 = movieTop50
@@ -137,7 +137,7 @@ df1.rename(columns={"vote_average": "TMDB rating", "IMDB_rating": "IMDB rating",
 fig = px.scatter(df1,
                  x="TMDB rating",
                  y="IMDB rating",
-                 title='TMDB ratings vs IMDB ratings van top 50 TMDB films',
+                 title='TMDB ratings vs IMDB ratings van top 50 Engelstalige TMDB films',
                  labels=dict(x='TMDB rating', y='IMDB rating'),
                  color="Title",
                  hover_name="Title",
@@ -146,7 +146,7 @@ fig.update_layout(legend_title_text='Movie name')
 
 with col2:
     st.subheader(
-        "Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engels-talige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
+        "Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engelstalige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
     st.plotly_chart(fig)
 
 fig = go.Figure()
