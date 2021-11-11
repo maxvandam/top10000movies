@@ -279,6 +279,7 @@ fig = px.choropleth_mapbox(gdf_movies,
 fig.update_layout(title='Gemiddeld cijfer per land')
 
 gdf_movies = gdf_movies[["original_language","name","vote_avg","aantal_films"]]
+gdf_movies = gdf_movies.sort_values("aantal_films",ascending=False)
 
 with col1:
     st.header("Kaart van landen waar films afspelen")
