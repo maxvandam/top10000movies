@@ -10,6 +10,7 @@ import geopandas as gpd
 ia = imdb.IMDb()
 
 st.set_page_config(layout="wide")
+st.image("https://i.imgur.com/ZbOOGMN.png")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
 st.header("Door Max van Dam en Gian van Veen")
 col1, col2 = st.columns(2)
