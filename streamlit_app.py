@@ -1,14 +1,16 @@
 import pandas as pd
 import plotly.express as px
-import seaborn as sns
 import plotly.graph_objects as go
 from ast import literal_eval
 import imdb
 import streamlit as st
 import geopandas as gpd
 
+
+#IMDb package initialiseren
 ia = imdb.IMDb()
 
+#Streamlit pagina layout setup
 st.set_page_config(layout="wide")
 st.image("https://i.imgur.com/ZbOOGMN.png")
 st.title("Dashboard analyse Top 10.000 films op TMDB")
@@ -17,15 +19,17 @@ col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
-
+#Inladen CSV Top 10000 films
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv", converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0', 1)
 
 movieDF2 = movieDF.sort_values("vote_average", ascending=False)
 
+#Data filteren zodat alleen films met meer dan 10 stemmen overblijven
 movieDF = movieDF[movieDF['vote_count'] > 10]
 genreList = []
 
+#Lijst maken met alle genres in de films
 for ind, row in movieDF.iterrows():
     genreList.extend(row['genre'])
 
@@ -123,7 +127,7 @@ for ind,row in movieTop50.iterrows():
     rating = ia.get_movie(code).data['rating']
     ratings.append(rating)
 
-# movieTop50['IMDB_rating'] = ratings
+movieTop50['IMDB_rating'] = ratings
 #movieTop50 = pd.read_csv("movieTop50.csv")
 
 with col2:
