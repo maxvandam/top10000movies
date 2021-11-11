@@ -248,7 +248,15 @@ def landPicker(lan):
 
 df_movies = movieDF.copy()
 
-df_movies = df_movies.sort_values('vote_average', ascending=False).head(3500)
+df_movies['vote_avg'] = df_movies.groupby('name')['vote_average'].transform('mean')
+df_movies['aantal_films'] = df_movies.groupby('name')['vote_average'].transform('size')
+
+df_movies.drop_duplicates(subset="original_language",keep="first",inplace=True)
+
+with col2:
+    st.dataframe(df_movies)
+
+#df_movies = df_movies.sort_values('vote_average', ascending=False).head(3500)
 
 testList = []
 for ind, row in df_movies.iterrows():
@@ -261,8 +269,9 @@ df_movies = df_movies.merge(world, on='name')
 gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
 
 gdf_movies = gdf_movies.to_crs(epsg=4326)
-gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
-gdf_movies['aantal_films'] = gdf_movies.groupby('name')['vote_average'].transform('size')
+
+#gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
+#gdf_movies['aantal_films'] = gdf_movies.groupby('name')['vote_average'].transform('size')
 
 gdf_movies = gdf_movies.round({"vote_avg":2})
 
