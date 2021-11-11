@@ -253,11 +253,6 @@ df_movies['aantal_films'] = df_movies.groupby('original_language')['vote_average
 
 df_movies.drop_duplicates(subset="original_language",keep="first",inplace=True)
 
-with col2:
-    st.dataframe(df_movies)
-
-#df_movies = df_movies.sort_values('vote_average', ascending=False).head(3500)
-
 testList = []
 for ind, row in df_movies.iterrows():
     test = [landPicker(row['original_language'])]
@@ -269,9 +264,6 @@ df_movies = df_movies.merge(world, on='name')
 gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
 
 gdf_movies = gdf_movies.to_crs(epsg=4326)
-
-#gdf_movies['vote_avg'] = gdf_movies.groupby('name')['vote_average'].transform('mean')
-#gdf_movies['aantal_films'] = gdf_movies.groupby('name')['vote_average'].transform('size')
 
 gdf_movies = gdf_movies.round({"vote_avg":2})
 
@@ -286,10 +278,13 @@ fig = px.choropleth_mapbox(gdf_movies,
                            zoom=1)
 fig.update_layout(title='Gemiddeld cijfer per land')
 
+gdf_movies = gdf_movies[["original_language","name","vote_avg","aantal_films"]]
+
 with col1:
     st.header("Kaart van landen waar films afspelen")
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
     st.plotly_chart(fig)
+    st.dataframe(gdf_movies)
 
 maxReviews = pd.read_csv('moviereviews.csv', encoding="ISO-8859-1")
 
@@ -307,6 +302,7 @@ fig = px.scatter(df1,
                  hover_name="Title",
                  hover_data=["TMDB rating", "Max rating", "genre"])
 fig.update_layout(legend_title_text='Movie name')
+
 
 with col2:
     st.header("Vergelijking van Max zijn film cijfers")
