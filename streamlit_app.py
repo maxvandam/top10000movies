@@ -16,6 +16,22 @@ col1, col2 = st.columns(2)
 col1.header("Genres analyse")
 col2.header("Top 50 films analyse")
 
+page_bg_img = '''
+<style>
+body {
+background-image: url("https://www.cheaptvs.co.uk/blog/wp-content/uploads/2015/06/Camera-Action.jpg");
+background-size: cover;
+}
+</style>
+'''
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
+
+
+
+
+
 movieDF = pd.read_csv("Top_10000_Popular_Movies.csv", converters={'genre': literal_eval})
 movieDF = movieDF.drop('Unnamed: 0', 1)
 
