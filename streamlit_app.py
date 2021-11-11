@@ -33,13 +33,15 @@ genreList = []
 for ind, row in movieDF.iterrows():
     genreList.extend(row['genre'])
 
-
+#Functie die duplicates uit de lijst haalt
 def my_function(x):
     return list(dict.fromkeys(x))
 
-
+#Duplicates uit lijst halen
 genreList = my_function(genreList)
 
+
+#Variabelen voor elk genre aanmaken en op 0 zetten
 Action = 0
 Thriller = 0
 Adventure = 0
@@ -60,6 +62,7 @@ Music = 0
 War = 0
 TVmovie = 0
 
+#Loop die voor elk genre telt hoe vaak deze voorkomt
 for col, row in movieDF.iterrows():
     if "Action" in row['genre']:
         Action = Action + 1
@@ -109,27 +112,35 @@ genreDict = dict(
 genres = pd.DataFrame.from_dict(genreDict)
 genres = genres.sort_values('count', ascending=False)
 
+#Bar chart aanmaken voor aantal waarnemingen per genre
 fig = px.bar(x=genres['genre'], y=genres['count'], labels=dict(x="Genre", y="Aantal waarnemingen"),
              title="Aantal waarnemingen van genres in top 10000 films")
 
+#Bar chart laten zien in Streamlit
 with col1:
-    st.subheader("De onderstaande histogram laat zien hoe vaak elk genre terugkomt in de top 10.000 films van TMDB.")
+    st.subheader("De onderstaande bar chart laat zien hoe vaak elk genre terugkomt in de top 10.000 films van TMDB.")
     st.plotly_chart(fig)
 
+#Top 50 Engelstalige films uit het dataframe halen
 movieDFHigh = movieDF.sort_values('vote_average', ascending=False)
 movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
 movieTop50 = movieDFHigh.head(50)
 
 ratings = []
 
+#imdbpy package wordt gebruikt om de IMDb ratings van de top 50 films op te halen
 for ind,row in movieTop50.iterrows():
     code = ia.search_movie(row['original_title'])[0].movieID
     rating = ia.get_movie(code).data['rating']
     ratings.append(rating)
 
+#Lijst met IMDb ratings wordt aan DataFrame toegevoegd
 movieTop50['IMDB_rating'] = ratings
+
+#Bovenstaand DataFrame is opgeslagen in een CSV om de code sneller te laten runnen wanneer het imdbpy package te langzaam is
 #movieTop50 = pd.read_csv("movieTop50.csv")
 
+#DataFrame in Streamlit weergeven
 with col2:
     st.subheader("Dit is het DataFrame van de top 50 Engelstalige films van TMDB.")
     st.dataframe(movieTop50)
@@ -138,6 +149,7 @@ df1 = movieTop50
 df1.rename(columns={"vote_average": "TMDB rating", "IMDB_rating": "IMDB rating", "original_title": "Title"},
            inplace=True)
 
+#Scatterplot maken van TMDB ratings vergeleken met IMDb ratings
 fig = px.scatter(df1,
                  x="TMDB rating",
                  y="IMDB rating",
@@ -148,6 +160,7 @@ fig = px.scatter(df1,
                  hover_data=["TMDB rating", "IMDB rating", "genre"])
 fig.update_layout(legend_title_text='Movie name')
 
+#Weergeven in Streamlit
 with col2:
     st.subheader(
         "Onderstaand scatterplot laat de vergelijking zien van de IMDB cijfers en de TMDB cijfers van de top 50 Engelstalige films. De IMDB cijfers zijn opgehaald door het 'imdbpy' package te gebruiken om de IMDB API te gebruiken.")
@@ -155,24 +168,27 @@ with col2:
 
 fig = go.Figure()
 
+#Onderstaande code maakt voor elk genre een box plot trace van de TMDB cijfers van dat genre
 for genre in genreList:
     tempList = [genre]
     tempDF = movieDF['genre'].apply(lambda s: len(set(s) & set(tempList)) > 0)
     df = movieDF[tempDF]
     fig.add_trace(go.Box(x=df['vote_average'], legendgroup=genre, showlegend=True,
-                         name=genre))  # legendgrouptitle={"text":genre}))
+                         name=genre))
 
 fig.update_layout(title="Verdeling cijfers van films per genre", xaxis_title="Cijfer", yaxis_title="Genre")
 
+#Weergeven in Streamlit
 with col1:
     st.subheader("De boxplots laten voor elk genre van films zien hoe de TMDB cijfers zijn verdeeld.")
     st.plotly_chart(fig)
 
-# Start map
+# Start code voor kaart
 
+#Geopandas gebruiken om van elk land de geometrie te krijgen
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
-
+#Functie om bij elke taal van de films het correcte land te koppelen
 def landPicker(lan):
     if lan == 'en':
         return ('United States of America')
@@ -251,28 +267,36 @@ def landPicker(lan):
     elif lan == 'la':
         return ('Italy')
 
-
+#Nieuw DataFrame aanmaken als copy van DataFrame top 10000 films
 df_movies = movieDF.copy()
 
+#Een kolom wordt aangemaakt waar per land het gemiddelde cijfer wordt gezet, en een tweede kolom voor het aantal films per land
 df_movies['vote_avg'] = df_movies.groupby('original_language')['vote_average'].transform('mean')
 df_movies['aantal_films'] = df_movies.groupby('original_language')['vote_average'].transform('size')
 
+
+#Duplicates op basis van taal worden gedropt zodat per land/taal maar 1 rij overblijft
 df_movies.drop_duplicates(subset="original_language",keep="first",inplace=True)
 
+
+#Voor elke taal wordt de eerder gemaakte landPicker functie gebruikt om het land erbij te zoeken
 testList = []
 for ind, row in df_movies.iterrows():
     test = [landPicker(row['original_language'])]
     testList.extend(test)
 
+#Lijst met landen wordt toegevoegd aan DataFrame en wordt vervolgens gemerged met de geometrie van de landen
 df_movies['name'] = testList
 df_movies = df_movies.merge(world, on='name')
 
+#DataFrame omzetten in GeoDataFrame
 gdf_movies = gpd.GeoDataFrame(df_movies, geometry='geometry')
-
 gdf_movies = gdf_movies.to_crs(epsg=4326)
 
+#Kolom voor gemiddeld cijfer per land afronden naar 2 decimalen
 gdf_movies = gdf_movies.round({"vote_avg":2})
 
+#Wereldkaart aanmaken
 fig = px.choropleth_mapbox(gdf_movies,
                            geojson=gdf_movies.geometry,
                            locations=gdf_movies.index,
@@ -284,9 +308,11 @@ fig = px.choropleth_mapbox(gdf_movies,
                            zoom=1)
 fig.update_layout(title='Gemiddeld cijfer per land')
 
+#Aantal koloms van DataFrame selecteren om weer te geven in Streamlit
 gdf_movies = gdf_movies[["original_language","name","vote_avg","aantal_films"]]
 gdf_movies = gdf_movies.sort_values("aantal_films",ascending=False)
 
+#Weergeven in Streamlit
 with col1:
     st.header("Kaart van landen waar films afspelen")
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
@@ -294,13 +320,16 @@ with col1:
     st.caption("Deze informatie is ook te vinden in onderstaand DataFrame:")
     st.dataframe(gdf_movies)
 
+#CSV met reviews van Max inlezen
 maxReviews = pd.read_csv('moviereviews.csv', encoding="ISO-8859-1")
 
+#DataFrame van Top 10000 films mergen met die van Max
 reviews = maxReviews.merge(movieDF, left_on="Title", right_on="original_title", how="left")
 
 df1 = reviews.copy()
 df1.rename(columns={"vote_average": "TMDB rating", "Grade": "Max rating", "original_title": "title"}, inplace=True)
 
+#Scatterplot aanmaken voor TMDB ratings vergeleken met Max ratings
 fig = px.scatter(df1,
                  x="TMDB rating",
                  y="Max rating",
@@ -311,12 +340,12 @@ fig = px.scatter(df1,
                  hover_data=["TMDB rating", "Max rating", "genre"])
 fig.update_layout(legend_title_text='Movie name')
 
-
+#Weergeven in Streamlit
 with col2:
     st.header("Vergelijking van Max zijn film cijfers")
     st.subheader(
         "De onderstaande scatterplot geeft een visualisatie weer van de TMDB ratings van films vergeleken met de cijfers die Max aan deze films heeft gegeven.")
     st.plotly_chart(fig)
 
-
+#Foto onderaan dashboard
 st.image("https://i.imgur.com/ZbOOGMN.png")
