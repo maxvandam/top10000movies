@@ -248,8 +248,8 @@ def landPicker(lan):
 
 df_movies = movieDF.copy()
 
-df_movies['vote_avg'] = df_movies.groupby('name')['vote_average'].transform('mean')
-df_movies['aantal_films'] = df_movies.groupby('name')['vote_average'].transform('size')
+df_movies['vote_avg'] = df_movies.groupby('original_language')['vote_average'].transform('mean')
+df_movies['aantal_films'] = df_movies.groupby('original_language')['vote_average'].transform('size')
 
 df_movies.drop_duplicates(subset="original_language",keep="first",inplace=True)
 
