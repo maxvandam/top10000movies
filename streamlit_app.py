@@ -19,7 +19,7 @@ col2.header("Top 50 films analyse")
 page_bg_img = '''
 <style>
 body {
-background-image: url("https://www.cheaptvs.co.uk/blog/wp-content/uploads/2015/06/Camera-Action.jpg");
+background-image: url("https://wallpaperaccess.com/full/4840775.jpg");
 background-size: cover;
 }
 </style>
@@ -301,6 +301,7 @@ with col1:
     st.header("Kaart van landen waar films afspelen")
     st.subheader("De onderstaande kaart laat per land zien welk cijfer films uit dat land gemiddeld hebben.")
     st.plotly_chart(fig)
+    st.caption("Deze informatie is ook te vinden in onderstaand DataFrame:")
     st.dataframe(gdf_movies)
 
 maxReviews = pd.read_csv('moviereviews.csv', encoding="ISO-8859-1")
