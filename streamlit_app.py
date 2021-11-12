@@ -128,19 +128,19 @@ movieDFHigh = movieDFHigh[movieDFHigh['original_language'] == 'en']
 
 #movieTop50 = movieDFHigh.head(50)
 
-#ratings = []
+ratings = []
 
 #imdbpy package wordt gebruikt om de IMDb ratings van de top 50 films op te halen
-#for ind,row in movieTop50.iterrows():
-#    code = ia.search_movie(row['original_title'])[0].movieID
-#    rating = ia.get_movie(code).data['rating']
-#    ratings.append(rating)
+for ind,row in movieTop50.iterrows():
+    code = ia.search_movie(row['original_title'])[0].movieID
+    rating = ia.get_movie(code).data['rating']
+    ratings.append(rating)
 
 #Lijst met IMDb ratings wordt aan DataFrame toegevoegd
-#movieTop50['IMDB_rating'] = ratings
+movieTop50['IMDB_rating'] = ratings
 
 #Bovenstaand DataFrame is opgeslagen in een CSV om de code sneller te laten runnen wanneer het imdbpy package te langzaam is
-movieTop50 = pd.read_csv("movieTop50.csv")
+#movieTop50 = pd.read_csv("movieTop50.csv")
 
 #DataFrame in Streamlit weergeven
 with col2:
